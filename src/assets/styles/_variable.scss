@@ -1,0 +1,53 @@
+$lightFont: 300;
+$regularFont: 400;
+$mediumFont: 500;
+$boldFont: 700;
+
+$lineHeight36: 36px;
+$lineHeight28: 28px;
+$lineHeight24: 24px;
+$lineHeight22: 22px;
+$lineHeight20: 20px;
+
+$white: #ffffff;
+$black: #000000;
+
+@mixin fontStyle(
+  $fontFamily: null,
+  $size: null,
+  $weight: null,
+  $color: null,
+  $lineHeight: null,
+  $margin: null,
+  $padding: null
+) {
+  @if $fontFamily != null {
+    font-family: $fontFamily;
+  }
+  @if $size != null {
+    font-size: $size;
+  }
+  @if $weight != null {
+    font-weight: $weight;
+  }
+  @if $color != null {
+    color: $color;
+  }
+  @if $lineHeight != null {
+    line-height: $lineHeight;
+  }
+  @if $margin != null {
+    margin: $margin;
+  }
+  @if $padding != null {
+    padding: $padding;
+  }
+}
+
+@mixin transitionForAll($time: 0.3s, $transProp: ease) {
+  -webkit-transition: all $time $transProp;
+  -moz-transition: all $time $transProp;
+  -o-transition: all $time $transProp;
+  transition: all $time $transProp;
+  transition: all $time $transProp;
+}
