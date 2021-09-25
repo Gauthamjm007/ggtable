@@ -1,9 +1,103 @@
-@use "variable";
+@import "variable";
 
 body {
+  @include fontStyle(
+    $fontFamily: $fontLato,
+    $size: $font16,
+    $weight: $regularFont,
+    $color: $gray212,
+    $lineHeight: $lineHeight19
+  );
+
+  pre {
+    font-family: $fontLato;
+  }
+
+  a {
+    text-decoration: none;
+    &:hover,
+    &:active,
+    &:focus,
+    &:visited {
+      text-decoration: none;
+      cursor: pointer;
+      outline: 0;
+    }
+  }
+
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+  }
+
+  .heading1 {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font28,
+      $weight: $regularFont,
+      $color: $gray212,
+      $lineHeight: $lineHeight34
+    );
+  }
+
+  .heading2 {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font27,
+      $weight: $boldFont,
+      $color: $gray212,
+      $lineHeight: $lineHeight33
+    );
+  }
+
+  .heading3 {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font24,
+      $weight: $boldFont,
+      $color: $black1D1,
+      $lineHeight: $lineHeight29
+    );
+  }
+
+  .heading4 {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font20,
+      $weight: $boldFont,
+      $color: $grayB9,
+      $lineHeight: $lineHeight24
+    );
+  }
+
+  .heading5 {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font18,
+      $weight: $boldFont,
+      $color: $black1D1,
+      $lineHeight: $lineHeight22
+    );
+  }
+
+  .heading5Reg {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font18,
+      $weight: $regularFont,
+      $color: $black1D1,
+      $lineHeight: $lineHeight22
+    );
+  }
+
+  .paragraph {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font16,
+      $weight: $boldFont,
+      $color: $gray212,
+      $lineHeight: $lineHeight19
+    );
   }
 }
