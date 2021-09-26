@@ -1,4 +1,21 @@
-@use "variable";
+@import "variable";
 
 body {
+  main {
+    > div {
+      padding: 0px 36px 0px 78px;
+    }
+  }
+
+  .sideBar {
+    width: 78px;
+    background-color: $gray192;
+    position: fixed;
+    top: 0px;
+    left: 0;
+    bottom: 0;
+    height: 100%;
+    box-sizing: border-box;
+    z-index: 999;
+  }
 }

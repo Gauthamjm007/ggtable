@@ -1,14 +1,6 @@
 @import "variable";
 
 body {
-  @include fontStyle(
-    $fontFamily: $fontLato,
-    $size: $font16,
-    $weight: $regularFont,
-    $color: $gray212,
-    $lineHeight: $lineHeight19
-  );
-
   pre {
     font-family: $fontLato;
   }

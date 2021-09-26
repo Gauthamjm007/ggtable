@@ -1,3 +1,36 @@
+$fontLato: "Lato", sans-serif;
+
+$regularFont: 400;
+$boldFont: 700;
+
+$font28: 28px;
+$font27: 27px;
+$font24: 24px;
+$font20: 20px;
+$font18: 18px;
+$font16: 16px;
+
+$lineHeight34: 34px;
+$lineHeight33: 33px;
+$lineHeight29: 29px;
+$lineHeight24: 24px;
+$lineHeight22: 22px;
+$lineHeight19: 19px;
+
+$blue116: #116fed;
+$blue136: #136fed;
+
+$grayF2F: #f2f2f2;
+$gray707: #70707038;
+$gray212: #212121;
+$gray192: #192f48;
+$grayB9: #b9b9b9;
+
+$white: #ffffff;
+$whiteF9: #f9f9f9;
+$black: #000000;
+$black1D1: #1d1a1a;
+
 @mixin fontStyle(
   $fontFamily: null,
   $size: null,
@@ -37,36 +70,3 @@
   transition: all $time $transProp;
   transition: all $time $transProp;
 }
-
-$fontLato: "Lato", sans-serif;
-
-$regularFont: 400;
-$boldFont: 700;
-
-$font28: 28px;
-$font27: 27px;
-$font24: 24px;
-$font20: 20px;
-$font18: 18px;
-$font16: 16px;
-
-$lineHeight34: 34px;
-$lineHeight33: 33px;
-$lineHeight29: 29px;
-$lineHeight24: 24px;
-$lineHeight22: 22px;
-$lineHeight19: 19px;
-
-$blue116: #116fed;
-$blue136: #136fed;
-
-$grayF2F: #f2f2f2;
-$gray707: #70707038;
-$gray212: #212121;
-$gray192: #192f48;
-$grayB9: #b9b9b9;
-
-$white: #ffffff;
-$whiteF9: #f9f9f9;
-$black: #000000;
-$black1D1: #1d1a1a;

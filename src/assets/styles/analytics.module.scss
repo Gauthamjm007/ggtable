@@ -1,0 +1,17 @@
+@import "variable";
+
+body {
+  .analyticsContainer {
+    padding: 70px 0 0 34px;
+    .analyticsHeader {
+      h3 {
+        padding-bottom: 30px;
+      }
+      .analyticsFilter {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+    }
+  }
+}
