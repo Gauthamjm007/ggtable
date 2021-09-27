@@ -1,14 +1,15 @@
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { fetchAnalystics } from "./globalStore/actions/analytics";
+import { fetchAnalyticsData, fetchAppDataApi } from "./globalStore/actions";
 import "./assets/styles/app.scss";
 import { analyticsRoutes } from "../src/features/analytics/analyticsRoutes";
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAnalystics([{ id: 1, name: "User" }]));
+    dispatch(fetchAnalyticsData({}));
+    dispatch(fetchAppDataApi());
   }, [dispatch]);
 
   return (

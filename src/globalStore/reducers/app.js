@@ -1,16 +1,16 @@
 const initialStateValue = [];
 
-const analyticsReducer = (state = initialStateValue, action) => {
+const appsReducer = (state = initialStateValue, action) => {
   switch (action.type) {
-    case "SET_ANALYTICS":
+    case "SET_APPS":
       return [...action.payload];
-    case "ADD_ANALYTICS":
+    case "ADD_APPS":
       return [...state, { ...action.payload }];
-    case "RESET_ANALYTICS":
+    case "RESET_APPS":
       return [];
     default:
       return [...state];
   }
 };
 
-export default analyticsReducer;
+export default appsReducer;
