@@ -92,4 +92,154 @@ body {
       $lineHeight: $lineHeight19
     );
   }
+
+  .primaryBtn {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font18,
+      $weight: $regularFont,
+      $color: $white,
+      $lineHeight: $lineHeight22
+    );
+    background: $blue136;
+    @include transitionForAll($time: 0.4s, $transProp: ease-out);
+    padding: 8px 14px 12px 16px;
+    outline: none;
+    text-align: center;
+    display: inline-block;
+    border: none;
+    cursor: pointer;
+    border-radius: 3px;
+    text-transform: capitalize;
+    width: max-content;
+    &:hover,
+    &:focus,
+    &:active {
+      @include transitionForAll($time: 0.3s, $transProp: ease-in);
+      outline: none;
+      box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.16),
+        0px 2px 16px rgba(0, 0, 0, 0.24);
+    }
+    &.disabledBtn {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .secondaryBtn {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font18,
+      $weight: $regularFont,
+      $color: $blue136,
+      $lineHeight: $lineHeight22
+    );
+    background: $white;
+    @include transitionForAll($time: 0.4s, $transProp: ease-out);
+    padding: 8px 14px 12px 16px;
+    border: 1px solid $borderColor;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 3px;
+    width: max-content;
+    &:hover,
+    &:focus,
+    &:active {
+      @include transitionForAll($time: 0.3s, $transProp: ease-in);
+      box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.16),
+        0px 2px 16px rgba(0, 0, 0, 0.24);
+    }
+    &.disabledBtn {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+
+  .iconBtn {
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font16,
+      $weight: $boldFont,
+      $color: $black1D1,
+      $lineHeight: $lineHeight22
+    );
+    background: $white;
+    @include transitionForAll($time: 0.4s, $transProp: ease-out);
+    padding: 6px 8px 10px 8px;
+    border: 1px solid $borderColor;
+    text-align: center;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 3px;
+    width: max-content;
+
+    &:hover,
+    &:focus,
+    &:active {
+      @include transitionForAll($time: 0.3s, $transProp: ease-in);
+      box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.16),
+        0px 2px 16px rgba(0, 0, 0, 0.24);
+
+      .hoverImg {
+        display: inline-block;
+      }
+      .defaultImg {
+        display: none;
+      }
+    }
+    &.active {
+      border: 1px solid $blue136;
+    }
+
+    &.disabledBtn {
+      background: #f2f2f2;
+      opacity: 0.5;
+      cursor: not-allowed !important;
+    }
+
+    .hoverImg {
+      display: none;
+    }
+    .text {
+      margin-left: 8px;
+    }
+  }
+
+  .listInline {
+    list-style: none;
+    .listInlineItem {
+      display: inline-block;
+      width: auto;
+      .MuiTouchRipple-root {
+        display: none;
+      }
+      &.mr8 {
+        margin-right: 8px;
+      }
+      &.mr16 {
+        margin-right: 16px;
+      }
+    }
+  }
+
+  .filterOption {
+    .iconBtn {
+      min-width: 176px;
+      padding: 6px 8px 10px 18px;
+      text-align: start;
+    }
+    &.active {
+      .iconBtn {
+        border-radius: 4px;
+        border-left: 5px solid $blue136;
+      }
+    }
+  }
+
+  .listUnstyled {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
 }

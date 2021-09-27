@@ -11,6 +11,72 @@ body {
         display: flex;
         justify-content: space-between;
         align-items: center;
+        padding-bottom: 16px;
+        .dataRangePicker {
+          & :global(.react-daterange-picker__wrapper) {
+            display: none;
+          }
+        }
+      }
+      .analyticsSettingsWrapper {
+        padding: 36px 30px 20px;
+        border-radius: 4px;
+        border: 1px solid $borderColor;
+        h6 {
+          padding-bottom: 16px;
+        }
+
+        .filterOptions {
+          padding-bottom: 16px;
+          ul {
+            li {
+              padding-bottom: 16px;
+            }
+          }
+        }
+
+        .btnGroupWrapper {
+          display: flex;
+          justify-content: flex-end;
+        }
+      }
+
+      .analyticsTableWrapper {
+        padding: 20px 0;
+
+        table {
+          border-collapse: collapse;
+          width: 100%;
+          thead {
+            border-bottom: 1px solid $borderColor;
+
+            th {
+              padding: 16px;
+            }
+            ul {
+              li {
+                padding-bottom: 12px;
+                h5 {
+                  color: $gray707;
+                }
+              }
+            }
+          }
+
+          tbody {
+            tr {
+              td {
+                padding: 20px 0px 24px 20px;
+                border-bottom: 1px solid $borderColor;
+                position: relative;
+              }
+            }
+          }
+          th,
+          td {
+            text-align: left;
+          }
+        }
       }
     }
   }

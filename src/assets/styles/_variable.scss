@@ -21,7 +21,7 @@ $blue116: #116fed;
 $blue136: #136fed;
 
 $grayF2F: #f2f2f2;
-$gray707: #70707038;
+$gray707: #707070;
 $gray212: #212121;
 $gray192: #192f48;
 $grayB9: #b9b9b9;
@@ -30,6 +30,7 @@ $white: #ffffff;
 $whiteF9: #f9f9f9;
 $black: #000000;
 $black1D1: #1d1a1a;
+$borderColor: #eaeaea;
 
 @mixin fontStyle(
   $fontFamily: null,
