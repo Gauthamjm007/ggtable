@@ -4,11 +4,11 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import { fetchAnalyticsData, fetchAppDataApi } from "./globalStore/actions";
 import "./assets/styles/app.scss";
 import { analyticsRoutes } from "../src/features/analytics/analyticsRoutes";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(fetchAnalyticsData({}));
     dispatch(fetchAppDataApi());
   }, [dispatch]);
 

@@ -13,6 +13,7 @@ body {
         align-items: center;
         padding-bottom: 16px;
         .dataRangePicker {
+          height: 0px;
           & :global(.react-daterange-picker__wrapper) {
             display: none;
           }
@@ -29,7 +30,7 @@ body {
         .filterOptions {
           padding-bottom: 16px;
           text-transform: capitalize;
-
+          font-weight: $regularFont;
           ul {
             li {
               padding-bottom: 16px;

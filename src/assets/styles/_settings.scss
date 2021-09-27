@@ -225,10 +225,14 @@ body {
 
   .filterOption {
     .iconBtn {
-      min-width: 176px;
+      min-width: 116px;
       padding: 6px 8px 10px 18px;
       text-align: start;
       font-weight: $regularFont;
+    }
+
+    &.notAllowed {
+      cursor: not-allowed !important;
     }
     &.active {
       .iconBtn {

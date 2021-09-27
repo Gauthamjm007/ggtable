@@ -4,14 +4,10 @@ import { globalGetService } from "../../utils/globalApiServices";
 
 export const fetchAnalyticsData = (query = {}) => {
   return (dispatch) => {
-    globalGetService(
-      `/report?startDate=2021-05-01&endDate=2021-05-03`,
-      query
-    ).then((response) => {
+    globalGetService(`/report`, query).then((response) => {
       const _analyticsData = response?.data?.data.map((item) => {
         return {
           ...item,
-          // date: format(new Date(item.date), "d MMM y"),
           date: item.date,
           revenue: roundToTwo(item.revenue),
           fill_rate: roundToTwo((item.requests / item.responses) * 100),

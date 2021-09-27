@@ -1,24 +1,32 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import styles from "../../../assets/styles/analytics.module.scss";
-import { Button } from "../../../shared_ui_components";
 import IconButton from "../../../shared_ui_components/IconButton";
-import FilterOption from "../../../shared_ui_components/FilterOption";
+import { startOfMonth, endOfMonth, format, parse } from "date-fns";
 import FontAwesome from "react-fontawesome";
 import DateRangePicker from "@wojtekmaj/react-daterange-picker";
-import { format } from "date-fns";
-import { useSelector } from "react-redux";
-import { numberWithCommas, roundToTwo } from "../../../utils";
+import { useDispatch, useSelector } from "react-redux";
+import { numberWithCommas, roundToTwo, queryFilter } from "../../../utils";
+import { Filter } from "../components";
+import queryString from "query-string";
+import { useHistory, useLocation } from "react-router-dom";
+import { fetchAnalyticsData } from "../../../globalStore/actions";
 
 const TABLE_HEADERS = [
-  { key: "date", label: "Date", suffix: "", prefix: "" },
-  { key: "app_id", label: "App", suffix: "", prefix: "" },
-  { key: "requests", label: "Requests", suffix: "M", prefix: "" },
-  { key: "responses", label: "Responses", suffix: "M", prefix: "" },
-  { key: "impressions", label: "Impressions", suffix: "K", prefix: "" },
-  { key: "clicks", label: "Clicks", suffix: "M", prefix: "" },
-  { key: "revenue", label: "Revenue", suffix: "", prefix: "$" },
-  { key: "fill_rate", label: "Fill rate", suffix: "%", prefix: "" },
-  { key: "ctr", label: "CTR", suffix: "%", prefix: "" },
+  { key: "date", label: "Date", suffix: "", prefix: "", show: true },
+  { key: "app_id", label: "App", suffix: "", prefix: "", show: true },
+  { key: "requests", label: "Requests", suffix: "M", prefix: "", show: true },
+  { key: "responses", label: "Responses", suffix: "M", prefix: "", show: true },
+  {
+    key: "impressions",
+    label: "Impressions",
+    suffix: "K",
+    prefix: "",
+    show: true,
+  },
+  { key: "clicks", label: "Clicks", suffix: "M", prefix: "", show: true },
+  { key: "revenue", label: "Revenue", suffix: "", prefix: "$", show: true },
+  { key: "fill_rate", label: "Fill rate", suffix: "%", prefix: "", show: true },
+  { key: "ctr", label: "CTR", suffix: "%", prefix: "", show: true },
 ];
 
 const TABLE_HEADERS_SUM = [
@@ -34,11 +42,52 @@ const TABLE_HEADERS_SUM = [
 const TABLE_AVERAGE = ["fill_rate", "ctr"];
 
 export default function AnalyticsContainer() {
-  const [value, onChange] = useState([new Date(), new Date()]);
+  const dispatch = useDispatch();
+  const { search: searchQuery } = useLocation();
+  const history = useHistory();
+  const [date, setDate] = useState([
+    startOfMonth(new Date()),
+    endOfMonth(new Date()),
+  ]);
   const [open, setOpen] = useState(false);
   const [tableHeaders, setTableHeaders] = useState(TABLE_HEADERS);
+  const [showSettings, setShowSettings] = useState(false);
   const apps = useSelector((state) => state.apps);
   const analytics = useSelector((state) => state.analytics);
+
+  useEffect(() => {
+    if (searchQuery) {
+      let _querySeach = queryString.parse(searchQuery);
+      if (_querySeach?.start_date && _querySeach?.end_date) {
+        let startDate = parse(
+          _querySeach?.start_date,
+          "yyyy-MM-dd",
+          new Date()
+        ).toString();
+        let endDate = parse(
+          _querySeach?.end_date,
+          "yyyy-MM-dd",
+          new Date()
+        ).toString();
+
+        dispatch(
+          fetchAnalyticsData({
+            startDate: _querySeach?.start_date,
+            endDate: _querySeach?.end_date,
+          })
+        );
+
+        setDate([new Date(startDate), new Date(endDate)]);
+      }
+    } else {
+      dispatch(
+        fetchAnalyticsData({
+          startDate: format(startOfMonth(new Date()), "yyyy-MM-dd"),
+          endDate: format(endOfMonth(new Date()), "yyyy-MM-dd"),
+        })
+      );
+    }
+  }, [searchQuery]);
 
   const appsObj = useMemo(() => {
     let obj = {};
@@ -48,13 +97,32 @@ export default function AnalyticsContainer() {
     return obj;
   }, [apps]);
 
+  const handleDateChange = (data_arr = []) => {
+    let [startDate, endDate] = data_arr;
+    startDate = format(startDate, "yyyy-MM-dd");
+    endDate = format(endDate, "yyyy-MM-dd");
+    let _newSearch = queryFilter(searchQuery, {
+      start_date: startDate,
+      end_date: endDate,
+    });
+    dispatch(fetchAnalyticsData({ startDate, endDate }));
+    history.push({ search: _newSearch });
+    setDate(data_arr);
+  };
+
+  const handleUpdateHeader = (arr) => {
+    setTableHeaders(arr);
+  };
+
   const aggreegatedAnalytics = useMemo(() => {
     let obj = {};
 
     TABLE_HEADERS.forEach((item) => {
       if (TABLE_HEADERS_SUM.includes(item.key)) {
         obj[item.key] = analytics
-          .map((data) => Math.round(data[item.key]))
+          .map((data) =>
+            isNaN(Math.round(data[item.key])) ? 0 : Math.round(data[item.key])
+          )
           .reduce((a, b) => a + b, 0);
       }
 
@@ -92,6 +160,7 @@ export default function AnalyticsContainer() {
     return analytics?.map((item) => {
       return {
         ...item,
+        id: item.app_id,
         date: format(new Date(item.date), "d MMM y"),
         app_id: appsObj[item.app_id] ?? "-",
         requests: numberWithCommas(item.requests),
@@ -104,6 +173,10 @@ export default function AnalyticsContainer() {
       };
     });
   }, [analytics]);
+
+  const viewHeaders = useMemo(() => {
+    return tableHeaders.filter((item) => item.show);
+  }, [tableHeaders]);
 
   return (
     <section className={styles.analyticsContainer}>
@@ -119,17 +192,17 @@ export default function AnalyticsContainer() {
                 setOpen(true);
               }}
             >
-              {format(value[0], "MMM d")} - {format(value[1], "MMM d y")}
+              {format(date[0], "MMM d")} - {format(date[1], "MMM d y")}
             </IconButton>
             <div className={styles.dataRangePicker}>
               <DateRangePicker
-                onChange={onChange}
+                onChange={handleDateChange}
                 onCalendarClose={() => {
                   if (open) {
                     setOpen(false);
                   }
                 }}
-                value={value}
+                value={date}
                 closeCalendar={false}
                 calendarIcon={null}
                 isClose
@@ -139,41 +212,30 @@ export default function AnalyticsContainer() {
             </div>
           </span>
           <span>
-            <IconButton iconName={"sliders"}>Settings</IconButton>{" "}
+            <IconButton
+              iconName={"sliders"}
+              onClick={() => {
+                setShowSettings(true);
+              }}
+            >
+              Settings
+            </IconButton>{" "}
           </span>
         </div>
-
-        <div className={styles.analyticsSettingsWrapper}>
-          <h6 className="paragraph">Dimension and Metrics</h6>
-          <div className={styles.filterOptions}>
-            <ul className="listInline">
-              {tableHeaders.map((item) => {
-                return (
-                  <li className="listInlineItem mr16" key={item.key}>
-                    <FilterOption>{item.label}</FilterOption>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-          <div className={styles.btnGroupWrapper}>
-            <div>
-              <ul className="listInline">
-                <li className="listInlineItem mr16">
-                  <Button className="secondaryBtn">Close</Button>
-                </li>
-                <li className="listInlineItem">
-                  <Button className="primaryBtn">Apply Changes</Button>
-                </li>
-              </ul>
-            </div>
-          </div>
-        </div>
+        {showSettings && (
+          <Filter
+            tableHeaders={tableHeaders}
+            handleUpdateHeader={handleUpdateHeader}
+            handleClose={() => {
+              setShowSettings(false);
+            }}
+          />
+        )}
 
         <div className={styles.analyticsTableWrapper}>
           <table>
             <thead>
-              {TABLE_HEADERS.map((item) => {
+              {viewHeaders.map((item) => {
                 return (
                   <th key={item.key}>
                     <ul className="listUnstyled">
@@ -200,8 +262,8 @@ export default function AnalyticsContainer() {
             <tbody className="heading5Reg">
               {analyticsTableView.map((item) => {
                 return (
-                  <tr>
-                    {TABLE_HEADERS.map((header) => {
+                  <tr key={item.id + item.app_id}>
+                    {viewHeaders.map((header) => {
                       return <td>{item[header.key]}</td>;
                     })}
                   </tr>
