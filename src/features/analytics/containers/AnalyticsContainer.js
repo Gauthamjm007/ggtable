@@ -7,7 +7,7 @@ import FontAwesome from "react-fontawesome";
 import DateRangePicker from "@wojtekmaj/react-daterange-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { numberWithCommas, roundToTwo, queryFilter } from "../../../utils";
-import { Filter, AppFilter } from "../components";
+import { Filter, AppFilter, RangeFilter } from "../components";
 import queryString from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import { fetchAnalyticsData } from "../../../globalStore/actions";
@@ -337,11 +337,7 @@ export default function AnalyticsContainer() {
                             {["app_id"].includes(item.key) ? (
                               <AppFilter />
                             ) : (
-                              <FontAwesome
-                                name={"filter"}
-                                size="2x"
-                                style={{ color: "#707070" }}
-                              />
+                              <RangeFilter />
                             )}
                           </li>
                           <li>
