@@ -10,7 +10,7 @@ user to perform some operations that will alter the view for the end user .
 
 ## Video Demo
 
-[![Watch the video](https://youtu.be/yebgS3Shch4)](https://youtu.be/yebgS3Shch4)
+[![https://youtu.be/yebgS3Shch4](https://user-images.githubusercontent.com/26291295/135108179-0bedda03-55cb-4a46-bb4a-4a22b2b379a1.png))](https://youtu.be/yebgS3Shch4)
 
 ### Run locally
 
