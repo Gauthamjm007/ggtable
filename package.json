@@ -2,10 +2,12 @@
   "name": "ggtable",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://gauthamjm007.github.io/ggtable",
   "dependencies": {
     "@wojtekmaj/react-daterange-picker": "^3.3.0",
     "axios": "^0.21.4",
     "date-fns": "^2.24.0",
+    "gh-pages": "^3.2.3",
     "rc-slider": "^9.7.2",
     "react": "^17.0.2",
     "react-beautiful-dnd": "^13.1.0",
@@ -23,7 +25,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
