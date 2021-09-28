@@ -2,5 +2,12 @@
 
 @media (min-width: 600px) and (max-width: 959px) {
   body {
+    .appImageWrapper {
+      position: relative;
+      margin-left: 0px;
+      img {
+        display: none;
+      }
+    }
   }
 }

@@ -223,6 +223,43 @@ body {
     }
   }
 
+  input {
+    width: 100%;
+    @include fontStyle(
+      $fontFamily: $fontLato,
+      $size: $font16,
+      $weight: $regularFont,
+      $color: $black1D1,
+      $lineHeight: $lineHeight22
+    );
+    border-radius: 10px;
+    border: 2px solid $borderColor;
+    padding: 8px 12px;
+    box-sizing: border-box;
+    &:active,
+    &:focus,
+    &:hover {
+      border: 2px solid $blue136;
+    }
+    &::-webkit-input-placeholder {
+      /* Chrome/Opera/Safari */
+      @include fontStyle(
+        $fontFamily: $fontLato,
+        $size: $font16,
+        $weight: $regularFont,
+        $color: #757575,
+        $lineHeight: $lineHeight22
+      );
+      opacity: 1;
+      text-transform: none;
+    }
+
+    &:active,
+    &:focus {
+      outline: none;
+    }
+  }
+
   .filterOption {
     .iconBtn {
       min-width: 116px;

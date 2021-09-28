@@ -7,28 +7,64 @@ import FontAwesome from "react-fontawesome";
 import DateRangePicker from "@wojtekmaj/react-daterange-picker";
 import { useDispatch, useSelector } from "react-redux";
 import { numberWithCommas, roundToTwo, queryFilter } from "../../../utils";
-import { Filter } from "../components";
+import { Filter, AppFilter } from "../components";
 import queryString from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import { fetchAnalyticsData } from "../../../globalStore/actions";
 import { dummyImage } from "../../../constants";
 
 const TABLE_HEADERS = [
-  { key: "date", label: "Date", suffix: "", prefix: "", show: true },
-  { key: "app_id", label: "App", suffix: "", prefix: "", show: true },
-  { key: "requests", label: "Requests", suffix: "M", prefix: "", show: true },
-  { key: "responses", label: "Responses", suffix: "M", prefix: "", show: true },
+  { key: "date", label: "Date", suffix: "", prefix: "", show: true, id: "1" },
+  { key: "app_id", label: "App", suffix: "", prefix: "", show: true, id: "2" },
+  {
+    key: "requests",
+    label: "Requests",
+    suffix: "M",
+    prefix: "",
+    show: true,
+    id: "3",
+  },
+  {
+    key: "responses",
+    label: "Responses",
+    suffix: "M",
+    prefix: "",
+    show: true,
+    id: "4",
+  },
   {
     key: "impressions",
     label: "Impressions",
-    suffix: "K",
+    suffix: "M",
     prefix: "",
     show: true,
+    id: "5",
   },
-  { key: "clicks", label: "Clicks", suffix: "M", prefix: "", show: true },
-  { key: "revenue", label: "Revenue", suffix: "", prefix: "$", show: true },
-  { key: "fill_rate", label: "Fill rate", suffix: "%", prefix: "", show: true },
-  { key: "ctr", label: "CTR", suffix: "%", prefix: "", show: true },
+  {
+    key: "clicks",
+    label: "Clicks",
+    suffix: "M",
+    prefix: "",
+    show: true,
+    id: "6",
+  },
+  {
+    key: "revenue",
+    label: "Revenue",
+    suffix: "K",
+    prefix: "$",
+    show: true,
+    id: "7",
+  },
+  {
+    key: "fill_rate",
+    label: "Fill rate",
+    suffix: "%",
+    prefix: "",
+    show: true,
+    id: "8",
+  },
+  { key: "ctr", label: "CTR", suffix: "%", prefix: "", show: true, id: "9" },
 ];
 
 const TABLE_HEADERS_SUM = [
@@ -87,16 +123,26 @@ export default function AnalyticsContainer() {
         }
       }
 
-      if (_querySeach?.show_headers) {
-        let { show_headers } = _querySeach;
+      if (_querySeach?.show_headers && _querySeach?.order) {
+        let { show_headers, order } = _querySeach;
         show_headers = show_headers.split(",");
-        let _tableHeader = TABLE_HEADERS.map((item) => {
-          return { ...item, show: show_headers.includes(item.key) };
+        order = order.split(",");
+
+        let _tableHeader = order.map((item) => {
+          return TABLE_HEADERS.find((head) => head.id === item);
+        });
+
+        _tableHeader = _tableHeader.map((head) => {
+          return {
+            ...head,
+            show: show_headers?.includes(head.id),
+          };
         });
         setTableHeaders(_tableHeader);
       } else {
-        let _tableHeader = TABLE_HEADERS.map((item) => item.key).join(",");
+        let _tableHeader = TABLE_HEADERS.map((item) => item.id).join(",");
         let _newSearch = queryFilter(searchQuery, {
+          order: _tableHeader,
           show_headers: _tableHeader,
         });
         history.push({ search: _newSearch });
@@ -140,14 +186,16 @@ export default function AnalyticsContainer() {
   };
 
   const handleUpdateHeader = (arr) => {
-    let _queryArray = arr
+    let _queryArrayShow = arr
       .filter((item) => item.show)
-      .map((item) => item.key)
+      .map((item) => item.id)
       .join(",");
-    // setTableHeaders(arr);
+
+    let _queryOrder = arr.map((item) => item.id).join(",");
 
     let _newSearch = queryFilter(searchQuery, {
-      show_headers: _queryArray,
+      show_headers: _queryArrayShow,
+      order: _queryOrder,
     });
 
     history.push({ search: _newSearch });
@@ -165,18 +213,18 @@ export default function AnalyticsContainer() {
           .reduce((a, b) => a + b, 0);
       }
 
-      if (["requests", "responses", "clicks"].includes(item.key)) {
+      if (
+        ["requests", "responses", "clicks", "impressions"].includes(item.key)
+      ) {
         let million = 1000000;
         obj[item.key] = `${roundToTwo(obj[item.key] / million)} ${item.suffix}`;
       }
 
-      if (["impressions"].includes(item.key)) {
-        let thousand = 1000;
-        obj[item.key] = `${roundToTwo(obj[item.key] / thousand)}${item.suffix}`;
-      }
-
       if (["revenue"].includes(item.key)) {
-        obj[item.key] = `${item.prefix}${obj[item.key]}`;
+        let thousand = 1000;
+        obj[item.key] = `${item.prefix}${Math.round(obj[item.key] / thousand)}${
+          item.suffix
+        }`;
       }
 
       if (["fill_rate", "ctr"].includes(item.key)) {
@@ -286,11 +334,15 @@ export default function AnalyticsContainer() {
                       <th key={item.key}>
                         <ul className="listUnstyled">
                           <li>
-                            <FontAwesome
-                              name={"filter"}
-                              size="2x"
-                              style={{ color: "#707070" }}
-                            />
+                            {["app_id"].includes(item.key) ? (
+                              <AppFilter />
+                            ) : (
+                              <FontAwesome
+                                name={"filter"}
+                                size="2x"
+                                style={{ color: "#707070" }}
+                              />
+                            )}
                           </li>
                           <li>
                             <h5 className="heading5">{item.label}</h5>

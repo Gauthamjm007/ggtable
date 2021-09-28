@@ -2,17 +2,11 @@
 
 @media (min-width: 0px) and (max-width: 599px) {
   body {
-    br {
-      display: none;
-    }
-
-    .emptyHeaderdiv {
-      // height: 53px;
-    }
-
-    .snackbar {
-      > div {
-        padding: 8px 16px;
+    .appImageWrapper {
+      position: relative;
+      margin-left: 0px;
+      img {
+        display: none;
       }
     }
   }

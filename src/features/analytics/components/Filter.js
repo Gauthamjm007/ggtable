@@ -114,25 +114,23 @@ export default function Filter({
         </ul>
       </div>
       <div className={styles.btnGroupWrapper}>
-        <div>
-          <ul className="listInline">
-            <li className="listInlineItem mr16">
-              <Button
-                className="secondaryBtn"
-                onClick={() => {
-                  handleClose(false);
-                }}
-              >
-                Close
-              </Button>
-            </li>
-            <li className="listInlineItem">
-              <Button className="primaryBtn" onClick={handleApplyChange}>
-                Apply Changes
-              </Button>
-            </li>
-          </ul>
-        </div>
+        <ul className="listInline">
+          <li className="listInlineItem mr16">
+            <Button
+              className="secondaryBtn"
+              onClick={() => {
+                handleClose(false);
+              }}
+            >
+              Close
+            </Button>
+          </li>
+          <li className="listInlineItem">
+            <Button className="primaryBtn" onClick={handleApplyChange}>
+              Apply Changes
+            </Button>
+          </li>
+        </ul>
       </div>
     </div>
   );
