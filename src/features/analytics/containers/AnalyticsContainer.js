@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import styles from "../../../assets/styles/analytics.module.scss";
+import { NoData } from "../../../shared_elements";
 import IconButton from "../../../shared_ui_components/IconButton";
 import { startOfMonth, endOfMonth, format, parse } from "date-fns";
 import FontAwesome from "react-fontawesome";
@@ -10,6 +11,7 @@ import { Filter } from "../components";
 import queryString from "query-string";
 import { useHistory, useLocation } from "react-router-dom";
 import { fetchAnalyticsData } from "../../../globalStore/actions";
+import { dummyImage } from "../../../constants";
 
 const TABLE_HEADERS = [
   { key: "date", label: "Date", suffix: "", prefix: "", show: true },
@@ -199,7 +201,13 @@ export default function AnalyticsContainer() {
         ...item,
         id: item.app_id,
         date: format(new Date(item.date), "d MMM y"),
-        app_id: appsObj[item.app_id] ?? "-",
+        app_id:
+          (
+            <span className="appImageWrapper">
+              <img src={dummyImage} alt={appsObj[item.app_id]} />
+              {appsObj[item.app_id]}
+            </span>
+          ) ?? "-",
         requests: numberWithCommas(item.requests),
         responses: numberWithCommas(item.responses),
         impressions: numberWithCommas(item.impressions),
@@ -268,49 +276,52 @@ export default function AnalyticsContainer() {
             }}
           />
         )}
-
-        <div className={styles.analyticsTableWrapper}>
-          <table>
-            <thead>
-              <tr>
-                {viewHeaders.map((item) => {
+        {analyticsTableView?.length ? (
+          <div className={styles.analyticsTableWrapper}>
+            <table>
+              <thead>
+                <tr>
+                  {viewHeaders.map((item) => {
+                    return (
+                      <th key={item.key}>
+                        <ul className="listUnstyled">
+                          <li>
+                            <FontAwesome
+                              name={"filter"}
+                              size="2x"
+                              style={{ color: "#707070" }}
+                            />
+                          </li>
+                          <li>
+                            <h5 className="heading5">{item.label}</h5>
+                          </li>
+                          <li>
+                            <h1 className="heading1">
+                              {aggreegatedAnalytics[item.key]}
+                            </h1>
+                          </li>
+                        </ul>
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody className="heading5Reg">
+                {analyticsTableView.map((item, index) => {
                   return (
-                    <th key={item.key}>
-                      <ul className="listUnstyled">
-                        <li>
-                          <FontAwesome
-                            name={"filter"}
-                            size="2x"
-                            style={{ color: "#707070" }}
-                          />
-                        </li>
-                        <li>
-                          <h5 className="heading5">{item.label}</h5>
-                        </li>
-                        <li>
-                          <h1 className="heading1">
-                            {aggreegatedAnalytics[item.key]}
-                          </h1>
-                        </li>
-                      </ul>
-                    </th>
+                    <tr key={item.id + item.app_id + index}>
+                      {viewHeaders.map((header, index) => {
+                        return <td key={index}>{item[header.key]}</td>;
+                      })}
+                    </tr>
                   );
                 })}
-              </tr>
-            </thead>
-            <tbody className="heading5Reg">
-              {analyticsTableView.map((item, index) => {
-                return (
-                  <tr key={item.id + item.app_id + index}>
-                    {viewHeaders.map((header, index) => {
-                      return <td key={index}>{item[header.key]}</td>;
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
-        </div>
+              </tbody>
+            </table>
+          </div>
+        ) : (
+          <NoData />
+        )}
       </div>
     </section>
   );

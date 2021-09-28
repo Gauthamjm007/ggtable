@@ -18,4 +18,35 @@ body {
     box-sizing: border-box;
     z-index: 999;
   }
+
+  .appImageWrapper {
+    margin-left: 16px;
+    position: relative;
+    img {
+      position: absolute;
+      left: -30px;
+      top: 0px;
+    }
+  }
+
+  .noDataWrapper {
+    padding: 102px 0;
+    width: 100%;
+    display: grid;
+    place-items: center;
+    background-color: $whiteF9;
+    .noData {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .dataList {
+        padding-left: 24px;
+      }
+
+      p {
+        padding-top: 16px;
+      }
+    }
+  }
 }
