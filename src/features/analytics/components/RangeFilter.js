@@ -1,29 +1,49 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import "rc-slider/assets/index.css";
 import FontAwesome from "react-fontawesome";
 import { Button, ClickAwayListener } from "../../../shared_ui_components";
 import Slider from "rc-slider";
+import { numberWithCommas } from "../../../utils";
 const { createSliderWithTooltip } = Slider;
 const Range = createSliderWithTooltip(Slider.Range);
 
-export default function RangeFilter({ apps, handleUpdateFilter }) {
-  const [appsList, setAppsList] = useState([
-    { id: 1, name: "App 1" },
-    { id: 2, name: "App 2" },
-  ]);
+export default function RangeFilter({
+  id,
+  handleUpdateTableRangeFilter,
+  min,
+  max,
+  filter_min,
+  filter_max,
+}) {
+  const [range, setRange] = useState([0, 0]);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
 
-  //   useEffect(() => {
-  //     if (apps?.length) {
-  //       let _apps = apps.map((item) => {
-  //         return { ...item, selected: false };
-  //       });
-  //       setAppsList(_apps);
-  //     } else {
-  //       setAppsList([]);
-  //     }
-  //   }, [apps]);
+  useEffect(() => {
+    if (filter_min > -1 && filter_max > -1) {
+      setRange([filter_min, filter_max]);
+    } else {
+      setRange([min, max]);
+    }
+  }, [min, max, filter_min, filter_max]);
+
+  const filterApplied = useMemo(() => {
+    if (filter_max !== max || filter_min !== min) {
+      return true;
+    }
+
+    return false;
+  }, [filter_max, filter_min, min, max]);
+
+  const handleApply = () => {
+    handleUpdateTableRangeFilter(id, { min: range[0], max: range[1] });
+    setOpen(false);
+  };
+
+  const handleReset = () => {
+    handleUpdateTableRangeFilter(id, { min, max });
+    setOpen(false);
+  };
 
   return (
     <div className="appFilter">
@@ -35,7 +55,10 @@ export default function RangeFilter({ apps, handleUpdateFilter }) {
         <FontAwesome
           name={"filter"}
           size="2x"
-          style={{ color: "#707070", cursor: "pointer" }}
+          style={{
+            color: filterApplied ? "#136FED" : "#707070",
+            cursor: "pointer",
+          }}
           onClick={() => {
             setOpen(!open);
           }}
@@ -44,24 +67,32 @@ export default function RangeFilter({ apps, handleUpdateFilter }) {
           <div className={"appFilterWrapper"}>
             <div className="requestRange">
               <Range
-                min={0}
+                onChange={(val) => {
+                  setRange([...val]);
+                }}
+                min={min}
                 railStyle={{ color: "#fff1f1 !important" }}
-                max={20}
-                defaultValue={[3, 10]}
+                max={max}
+                value={range}
+                defaultValue={[0, 100]}
                 tipFormatter={(value) => `${value}`}
               />
               <ul className="listInlineAway">
-                <li className="paragraph">0</li>
-                <li className="paragraph">30</li>
+                <li className="paragraph">{numberWithCommas(range[0])}</li>
+                <li className="paragraph">{numberWithCommas(range[1])}</li>
               </ul>
             </div>
             <div className="btnGroupWrapper">
               <ul className="listInline">
                 <li className="listInlineItem mr16">
-                  <Button className="secondaryBtn">Clear</Button>
+                  <Button className="secondaryBtn" onClick={handleReset}>
+                    Reset
+                  </Button>
                 </li>
                 <li className="listInlineItem">
-                  <Button className="primaryBtn">Apply </Button>
+                  <Button className="primaryBtn" onClick={handleApply}>
+                    Apply{" "}
+                  </Button>
                 </li>
               </ul>
             </div>

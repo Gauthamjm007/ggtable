@@ -4,11 +4,12 @@ import { useHistory, useLocation } from "react-router-dom";
 import { startOfMonth, endOfMonth, format, parse } from "date-fns";
 import DateRangePicker from "@wojtekmaj/react-daterange-picker";
 import { useDispatch, useSelector } from "react-redux";
-
+import FontAwesome from "react-fontawesome";
 import { fetchAnalyticsData } from "../../../globalStore/actions";
 import { dummyImage } from "../../../constants";
 import styles from "../../../assets/styles/analytics.module.scss";
 import { NoData } from "../../../shared_elements";
+import { Button } from "../../../shared_ui_components";
 import IconButton from "../../../shared_ui_components/IconButton";
 import { numberWithCommas, roundToTwo, queryFilter } from "../../../utils";
 import { Filter, AppFilter, RangeFilter } from "../components";
@@ -77,8 +78,6 @@ const TABLE_HEADERS_SUM = [
   "ctr",
 ];
 
-const TABLE_AVERAGE = ["fill_rate", "ctr"];
-
 export default function AnalyticsContainer() {
   const dispatch = useDispatch();
   const { search: searchQuery } = useLocation();
@@ -89,7 +88,9 @@ export default function AnalyticsContainer() {
   ]);
   const [open, setOpen] = useState(false);
   const [tableHeaders, setTableHeaders] = useState(TABLE_HEADERS);
+  const [tableRangeFilter, setTableRangeFilter] = useState({});
   const [showSettings, setShowSettings] = useState(false);
+  const [appFilterArray, setAppFilterArray] = useState([]);
   const apps = useSelector((state) => state.apps);
   const analytics = useSelector((state) => state.analytics);
 
@@ -201,75 +202,191 @@ export default function AnalyticsContainer() {
     history.push({ search: _newSearch });
   };
 
-  const aggreegatedAnalytics = useMemo(() => {
+  const aggreegatedAnalyticsOrg = useMemo(() => {
     let obj = {};
 
     TABLE_HEADERS.forEach((item) => {
       if (TABLE_HEADERS_SUM.includes(item.key)) {
-        obj[item.key] = analytics
-          .map((data) =>
-            isNaN(Math.round(data[item.key])) ? 0 : Math.round(data[item.key])
-          )
-          .reduce((a, b) => a + b, 0);
+        let _analytics_num = analytics.map((data) =>
+          isNaN(Math.round(data[item.key])) ? 0 : Math.round(data[item.key])
+        );
+        let sum = _analytics_num.reduce((a, b) => a + b, 0);
+        let min = 0;
+        let max = Math.max(..._analytics_num);
+        obj[item.key] = {
+          sum,
+          min,
+          max,
+        };
       }
 
       if (
         ["requests", "responses", "clicks", "impressions"].includes(item.key)
       ) {
         let million = 1000000;
-        obj[item.key] = `${roundToTwo(obj[item.key] / million)} ${item.suffix}`;
+        obj[item.key]["sum"] = `${roundToTwo(obj[item.key]["sum"] / million)} ${
+          item.suffix
+        }`;
       }
 
       if (["revenue"].includes(item.key)) {
         let thousand = 1000;
-        obj[item.key] = `${item.prefix}${Math.round(obj[item.key] / thousand)}${
-          item.suffix
-        }`;
+        obj[item.key]["sum"] = `${item.prefix}${Math.round(
+          obj[item.key]["sum"] / thousand
+        )}${item.suffix}`;
       }
 
       if (["fill_rate", "ctr"].includes(item.key)) {
-        obj[item.key] = `${roundToTwo(obj[item.key] / analytics.length)} ${
-          item.suffix
-        }`;
+        obj[item.key]["sum"] = `${roundToTwo(
+          obj[item.key]["sum"] / analytics.length
+        )} ${item.suffix}`;
       }
       if (item.key === "date") {
-        obj.date = analytics.length;
+        obj.date = { sum: analytics.length };
       }
       if (item.key === "app_id") {
-        obj.app_id = apps.length;
+        obj.app_id = { sum: apps.length };
       }
     });
 
     return obj;
   }, [analytics, apps]);
 
+  const handleResetFilter = () => {
+    let _obj = {};
+    for (const keys in aggreegatedAnalyticsOrg) {
+      if (TABLE_HEADERS_SUM.includes(keys)) {
+        _obj[keys] = {
+          max: aggreegatedAnalyticsOrg[keys]["max"],
+          min: aggreegatedAnalyticsOrg[keys]["min"],
+        };
+      }
+    }
+    setTableRangeFilter(_obj);
+  };
+
+  useEffect(() => {
+    if (Object.keys(aggreegatedAnalyticsOrg)?.length) {
+      handleResetFilter();
+    } else {
+      setTableRangeFilter({});
+    }
+  }, [aggreegatedAnalyticsOrg]);
+
   const analyticsTableView = useMemo(() => {
-    return analytics?.map((item) => {
-      return {
-        ...item,
-        id: item.app_id,
-        date: format(new Date(item.date), "d MMM y"),
-        app_id:
-          (
-            <span className="appImageWrapper">
-              <img src={dummyImage} alt={appsObj[item.app_id]} />
-              {appsObj[item.app_id]}
-            </span>
-          ) ?? "-",
-        requests: numberWithCommas(item.requests),
-        responses: numberWithCommas(item.responses),
-        impressions: numberWithCommas(item.impressions),
-        clicks: numberWithCommas(item.clicks),
-        revenue: `$${item.revenue}`,
-        fill_rate: `${item.fill_rate}%`,
-        ctr: `${item.ctr}%`,
-      };
+    let _analytics = [];
+
+    if (Object.keys(tableRangeFilter)?.length > 0 && analytics?.length) {
+      _analytics = analytics.filter((item) => {
+        return Object.keys(tableRangeFilter).every((tab) => {
+          return (
+            Math.round(item[tab]) >= tableRangeFilter[tab]["min"] &&
+            Math.round(item[tab]) <= tableRangeFilter[tab]["max"]
+          );
+        });
+      });
+    }
+
+    if (appFilterArray?.length) {
+      _analytics = _analytics.filter((item) => {
+        return appFilterArray.includes(item.app_id);
+      });
+    }
+
+    return _analytics;
+  }, [analytics, tableRangeFilter, appFilterArray]);
+
+  const analyticsTableViewString = useMemo(() => {
+    let _analytics = [];
+    if (analyticsTableView?.length) {
+      _analytics = analyticsTableView?.map((item) => {
+        return {
+          ...item,
+          id: item.app_id,
+          date: format(new Date(item.date), "d MMM y"),
+          app_id:
+            (
+              <span className="appImageWrapper">
+                <img src={dummyImage} alt={appsObj[item.app_id]} />
+                {appsObj[item.app_id]}
+              </span>
+            ) ?? "-",
+          requests: numberWithCommas(item.requests),
+          responses: numberWithCommas(item.responses),
+          impressions: numberWithCommas(item.impressions),
+          clicks: numberWithCommas(item.clicks),
+          revenue: `$${item.revenue}`,
+          fill_rate: `${item.fill_rate}%`,
+          ctr: `${item.ctr}%`,
+        };
+      });
+    }
+
+    return _analytics;
+  }, [analyticsTableView]);
+
+  const aggreegatedAnalyticsFiltered = useMemo(() => {
+    let obj = {};
+
+    TABLE_HEADERS.forEach((item) => {
+      if (TABLE_HEADERS_SUM.includes(item.key)) {
+        let _analytics_num = analyticsTableView.map((data) =>
+          isNaN(Math.round(data[item.key])) ? 0 : Math.round(data[item.key])
+        );
+        let sum = _analytics_num.reduce((a, b) => a + b, 0);
+        let min = 0;
+        let max = Math.max(..._analytics_num);
+        obj[item.key] = {
+          sum,
+          min,
+          max,
+        };
+      }
+
+      if (
+        ["requests", "responses", "clicks", "impressions"].includes(item.key)
+      ) {
+        let million = 1000000;
+        obj[item.key]["sum"] = `${roundToTwo(obj[item.key]["sum"] / million)} ${
+          item.suffix
+        }`;
+      }
+
+      if (["revenue"].includes(item.key)) {
+        let thousand = 1000;
+        obj[item.key]["sum"] = `${item.prefix}${Math.round(
+          obj[item.key]["sum"] / thousand
+        )}${item.suffix}`;
+      }
+
+      if (["fill_rate", "ctr"].includes(item.key)) {
+        obj[item.key]["sum"] = `${roundToTwo(
+          obj[item.key]["sum"] / analyticsTableView.length
+        )} ${item.suffix}`;
+      }
+      if (item.key === "date") {
+        obj.date = { sum: analyticsTableView.length };
+      }
+      if (item.key === "app_id") {
+        obj.app_id = {
+          sum: appFilterArray.length > 0 ? appFilterArray.length : apps.length,
+        };
+      }
     });
-  }, [analytics]);
+
+    return obj;
+  }, [analyticsTableView, appFilterArray]);
 
   const viewHeaders = useMemo(() => {
     return tableHeaders.filter((item) => item.show);
   }, [tableHeaders]);
+
+  const handleUpdateTableRangeFilter = (key, obj) => {
+    setTableRangeFilter({ ...tableRangeFilter, [key]: obj });
+  };
+  const handleUpdateAppFilter = (arr) => {
+    setAppFilterArray(arr);
+  };
 
   return (
     <section className={styles.analyticsContainer}>
@@ -305,14 +422,29 @@ export default function AnalyticsContainer() {
             </div>
           </span>
           <span>
-            <IconButton
-              iconName={"sliders"}
-              onClick={() => {
-                setShowSettings(true);
-              }}
-            >
-              Settings
-            </IconButton>{" "}
+            <ul className="listInline">
+              <li className="listInlineItem mr16">
+                <IconButton
+                  iconName={"sliders"}
+                  onClick={() => {
+                    setShowSettings(true);
+                  }}
+                >
+                  Settings
+                </IconButton>
+              </li>
+              <li className="listInlineItem">
+                <Button
+                  onClick={() => {
+                    handleResetFilter();
+                    setAppFilterArray([]);
+                  }}
+                  className="primaryBtn"
+                >
+                  Reset
+                </Button>
+              </li>
+            </ul>
           </span>
         </div>
         {showSettings && (
@@ -334,10 +466,35 @@ export default function AnalyticsContainer() {
                       <th key={item.key}>
                         <ul className="listUnstyled">
                           <li>
-                            {["app_id"].includes(item.key) ? (
-                              <AppFilter apps={apps} />
-                            ) : (
-                              <RangeFilter />
+                            {["app_id"].includes(item.key) && (
+                              <AppFilter
+                                apps={apps}
+                                appFilterArray={appFilterArray}
+                                handleUpdateAppFilter={handleUpdateAppFilter}
+                              />
+                            )}
+                            {TABLE_HEADERS_SUM.includes(item.key) && (
+                              <RangeFilter
+                                key={item.key}
+                                id={item.key}
+                                min={aggreegatedAnalyticsOrg[item.key]["min"]}
+                                max={aggreegatedAnalyticsOrg[item.key]["max"]}
+                                filter_min={tableRangeFilter[item.key]["min"]}
+                                filter_max={tableRangeFilter[item.key]["max"]}
+                                handleUpdateTableRangeFilter={
+                                  handleUpdateTableRangeFilter
+                                }
+                              />
+                            )}
+                            {["date"].includes(item.key) && (
+                              <FontAwesome
+                                name={"filter"}
+                                size="2x"
+                                style={{
+                                  color: "#707070",
+                                  cursor: "not-allowed",
+                                }}
+                              />
                             )}
                           </li>
                           <li>
@@ -345,7 +502,7 @@ export default function AnalyticsContainer() {
                           </li>
                           <li>
                             <h1 className="heading1">
-                              {aggreegatedAnalytics[item.key]}
+                              {aggreegatedAnalyticsFiltered[item.key]["sum"]}
                             </h1>
                           </li>
                         </ul>
@@ -355,7 +512,7 @@ export default function AnalyticsContainer() {
                 </tr>
               </thead>
               <tbody className="heading5Reg">
-                {analyticsTableView.map((item, index) => {
+                {analyticsTableViewString.map((item, index) => {
                   return (
                     <tr key={item.id + item.app_id + index}>
                       {viewHeaders.map((header, index) => {

@@ -7,6 +7,11 @@ body {
     }
   }
 
+  .disabled {
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
   .sideBar {
     width: 78px;
     background-color: $gray192;

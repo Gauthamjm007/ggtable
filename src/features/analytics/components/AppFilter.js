@@ -1,9 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import FontAwesome from "react-fontawesome";
 import { Button, ClickAwayListener } from "../../../shared_ui_components";
 import { updateArrayOfObj, searchFunctionality } from "../../../utils";
 
-export default function AppFilter({ apps, handleUpdateFilter }) {
+export default function AppFilter({
+  apps,
+  handleUpdateAppFilter,
+  appFilterArray,
+}) {
   const [appsList, setAppsList] = useState([]);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
@@ -11,13 +15,16 @@ export default function AppFilter({ apps, handleUpdateFilter }) {
   useEffect(() => {
     if (apps?.length) {
       let _apps = apps.map((item) => {
-        return { ...item, selected: false };
+        return {
+          ...item,
+          selected: appFilterArray.includes(item.app_id),
+        };
       });
       setAppsList(_apps);
     } else {
       setAppsList([]);
     }
-  }, [apps]);
+  }, [apps, appFilterArray]);
 
   const handleSelectApp = (app_id, val) => {
     let _apps = updateArrayOfObj(
@@ -27,6 +34,23 @@ export default function AppFilter({ apps, handleUpdateFilter }) {
       app_id
     );
     setAppsList(_apps);
+  };
+  const selectedApps = useMemo(() => {
+    return appsList
+      .filter((item) => {
+        return item.selected;
+      })
+      .map((item) => item.app_id);
+  }, [appsList]);
+
+  const handleApply = () => {
+    handleUpdateAppFilter(selectedApps);
+    setOpen(false);
+  };
+
+  const handleReset = () => {
+    handleUpdateAppFilter([]);
+    setOpen(false);
   };
 
   return (
@@ -61,7 +85,7 @@ export default function AppFilter({ apps, handleUpdateFilter }) {
                   (item) => (
                     <li
                       className="listInlineItem"
-                      key={item.id}
+                      key={item.app_id}
                       onClick={() =>
                         handleSelectApp(item.app_id, item.selected)
                       }
@@ -83,10 +107,14 @@ export default function AppFilter({ apps, handleUpdateFilter }) {
             <div className="btnGroupWrapper">
               <ul className="listInline">
                 <li className="listInlineItem mr16">
-                  <Button className="secondaryBtn">Clear</Button>
+                  <Button className="secondaryBtn" onClick={handleReset}>
+                    Reset
+                  </Button>
                 </li>
                 <li className="listInlineItem">
-                  <Button className="primaryBtn">Apply </Button>
+                  <Button className={`primaryBtn `} onClick={handleApply}>
+                    Apply{" "}
+                  </Button>
                 </li>
               </ul>
             </div>
