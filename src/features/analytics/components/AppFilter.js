@@ -1,25 +1,33 @@
 import { useState, useEffect } from "react";
 import FontAwesome from "react-fontawesome";
 import { Button, ClickAwayListener } from "../../../shared_ui_components";
+import { updateArrayOfObj, searchFunctionality } from "../../../utils";
 
 export default function AppFilter({ apps, handleUpdateFilter }) {
-  const [appsList, setAppsList] = useState([
-    { id: 1, name: "App 1" },
-    { id: 2, name: "App 2" },
-  ]);
+  const [appsList, setAppsList] = useState([]);
   const [search, setSearch] = useState("");
   const [open, setOpen] = useState(false);
 
-  //   useEffect(() => {
-  //     if (apps?.length) {
-  //       let _apps = apps.map((item) => {
-  //         return { ...item, selected: false };
-  //       });
-  //       setAppsList(_apps);
-  //     } else {
-  //       setAppsList([]);
-  //     }
-  //   }, [apps]);
+  useEffect(() => {
+    if (apps?.length) {
+      let _apps = apps.map((item) => {
+        return { ...item, selected: false };
+      });
+      setAppsList(_apps);
+    } else {
+      setAppsList([]);
+    }
+  }, [apps]);
+
+  const handleSelectApp = (app_id, val) => {
+    let _apps = updateArrayOfObj(
+      appsList,
+      { selected: !val },
+      "app_id",
+      app_id
+    );
+    setAppsList(_apps);
+  };
 
   return (
     <div className="appFilter">
@@ -40,15 +48,36 @@ export default function AppFilter({ apps, handleUpdateFilter }) {
           <div className={"appFilterWrapper"}>
             <div className="header">
               <p className="paragraph">Select App</p>
-              <input type="text" value={search} placeholder="Search" />
+              <input
+                type="text"
+                value={search}
+                placeholder="Search"
+                onChange={(e) => setSearch(e.target.value)}
+              />
             </div>
             <div className="filterList">
               <ul className="listUnstyled">
-                {appsList.map((item) => (
-                  <li className="listInlineItem" key={item.id}>
-                    {<span className="filterItem paragraph">{item.name}</span>}
-                  </li>
-                ))}
+                {searchFunctionality(appsList, "app_name", search).map(
+                  (item) => (
+                    <li
+                      className="listInlineItem"
+                      key={item.id}
+                      onClick={() =>
+                        handleSelectApp(item.app_id, item.selected)
+                      }
+                    >
+                      {
+                        <span
+                          className={`filterItem paragraph ${
+                            item.selected ? "active" : ""
+                          }`}
+                        >
+                          {item.app_name}
+                        </span>
+                      }
+                    </li>
+                  )
+                )}
               </ul>
             </div>
             <div className="btnGroupWrapper">

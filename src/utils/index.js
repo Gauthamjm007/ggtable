@@ -120,3 +120,12 @@ export const setUrlToCache = (url, value, day) => {
     cleanUpStorage(data, url, time);
   }
 };
+
+export const searchFunctionality = (arr, field, val) => {
+  val = val ? val.toLowerCase() : "";
+  arr = arr ?? [];
+  field = field ?? "";
+  return arr && arr?.length !== 0
+    ? arr?.filter((item) => item?.[field]?.toLowerCase()?.includes(val))
+    : [];
+};

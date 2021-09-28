@@ -46,7 +46,7 @@ body {
       padding: 12px;
 
       .requestRange {
-        padding-bottom: 16px;
+        padding-bottom: 8px;
         .rc-slider-handle {
           background-color: $blue136;
           border-color: $blue136;
@@ -65,7 +65,7 @@ body {
       }
 
       .filterList {
-        padding-bottom: 30px;
+        padding-bottom: 12px;
         ul {
           li {
             width: 100%;
@@ -75,6 +75,10 @@ body {
           cursor: pointer;
           padding: 6px 8px;
           display: block;
+
+          &.active {
+            color: $blue136;
+          }
 
           &:hover {
             background: $whiteF9 0% 0% no-repeat padding-box;

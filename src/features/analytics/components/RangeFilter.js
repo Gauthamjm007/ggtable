@@ -42,9 +42,6 @@ export default function RangeFilter({ apps, handleUpdateFilter }) {
         />
         {open && (
           <div className={"appFilterWrapper"}>
-            <div className="header">
-              <p className="paragraph">Select App</p>
-            </div>
             <div className="requestRange">
               <Range
                 min={0}
@@ -53,6 +50,10 @@ export default function RangeFilter({ apps, handleUpdateFilter }) {
                 defaultValue={[3, 10]}
                 tipFormatter={(value) => `${value}`}
               />
+              <ul className="listInlineAway">
+                <li className="paragraph">0</li>
+                <li className="paragraph">30</li>
+              </ul>
             </div>
             <div className="btnGroupWrapper">
               <ul className="listInline">

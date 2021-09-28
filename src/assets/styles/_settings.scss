@@ -223,6 +223,19 @@ body {
     }
   }
 
+  .listInlineAway {
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    .listInlineItem {
+      display: inline-block;
+      width: auto;
+      .MuiTouchRipple-root {
+        display: none;
+      }
+    }
+  }
+
   input {
     width: 100%;
     @include fontStyle(

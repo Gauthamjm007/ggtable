@@ -1,17 +1,17 @@
 import { useState, useMemo, useEffect } from "react";
+import queryString from "query-string";
+import { useHistory, useLocation } from "react-router-dom";
+import { startOfMonth, endOfMonth, format, parse } from "date-fns";
+import DateRangePicker from "@wojtekmaj/react-daterange-picker";
+import { useDispatch, useSelector } from "react-redux";
+
+import { fetchAnalyticsData } from "../../../globalStore/actions";
+import { dummyImage } from "../../../constants";
 import styles from "../../../assets/styles/analytics.module.scss";
 import { NoData } from "../../../shared_elements";
 import IconButton from "../../../shared_ui_components/IconButton";
-import { startOfMonth, endOfMonth, format, parse } from "date-fns";
-import FontAwesome from "react-fontawesome";
-import DateRangePicker from "@wojtekmaj/react-daterange-picker";
-import { useDispatch, useSelector } from "react-redux";
 import { numberWithCommas, roundToTwo, queryFilter } from "../../../utils";
 import { Filter, AppFilter, RangeFilter } from "../components";
-import queryString from "query-string";
-import { useHistory, useLocation } from "react-router-dom";
-import { fetchAnalyticsData } from "../../../globalStore/actions";
-import { dummyImage } from "../../../constants";
 
 const TABLE_HEADERS = [
   { key: "date", label: "Date", suffix: "", prefix: "", show: true, id: "1" },
@@ -335,7 +335,7 @@ export default function AnalyticsContainer() {
                         <ul className="listUnstyled">
                           <li>
                             {["app_id"].includes(item.key) ? (
-                              <AppFilter />
+                              <AppFilter apps={apps} />
                             ) : (
                               <RangeFilter />
                             )}
