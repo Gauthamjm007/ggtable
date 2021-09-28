@@ -10,7 +10,7 @@ user to perform some operations that will alter the view for the end user .
 
 ## Video Demo
 
-[![https://youtu.be/yebgS3Shch4](https://user-images.githubusercontent.com/26291295/135108179-0bedda03-55cb-4a46-bb4a-4a22b2b379a1.png))](https://youtu.be/yebgS3Shch4)
+[![https://youtu.be/yebgS3Shch4](https://user-images.githubusercontent.com/26291295/135108179-0bedda03-55cb-4a46-bb4a-4a22b2b379a1.png)](https://youtu.be/yebgS3Shch4)
 
 ### Run locally
 
@@ -47,6 +47,22 @@ Now the application will be running in localhost:3000 by default , in case of an
 - Responsive Design (Checked in ipad ,medium screen,large screen , ultra large screen , not responsive for mobile phones yet)<br/>
 - Table should work as per features set (met)
 - Minimal library dependency for other components (Didn't use any external ui library , used packages for Drag and Drop , routing , date picker and date)
+
+### Challenges
+
+- Calculating data without much of overhead and using useMemo and useCallback efficiently <br/>
+- Caching Data using local storage
+- Implementing Drag and Drop with reorder<br/>
+- Url Sharing
+
+### Things that could be improved
+
+Due to my limited time I did upon what was required , given more time , the following could have been implemented
+
+- Implemented Typescript
+- Could have followed TDD with Unit Testing using Jest and React Testing Library , Cypress for integration and functionality testing
+- Wrote Storybook for the components used
+- Caching using browser cache
 
 ### File Directory
 
