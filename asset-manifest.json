@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/ggtable/static/css/main.703f03fb.chunk.css",
+    "main.js": "/ggtable/static/js/main.fb79cbaa.chunk.js",
+    "main.js.map": "/ggtable/static/js/main.fb79cbaa.chunk.js.map",
+    "runtime-main.js": "/ggtable/static/js/runtime-main.5e4b9af0.js",
+    "runtime-main.js.map": "/ggtable/static/js/runtime-main.5e4b9af0.js.map",
+    "static/css/2.58fc907d.chunk.css": "/ggtable/static/css/2.58fc907d.chunk.css",
+    "static/js/2.507c5de8.chunk.js": "/ggtable/static/js/2.507c5de8.chunk.js",
+    "static/js/2.507c5de8.chunk.js.map": "/ggtable/static/js/2.507c5de8.chunk.js.map",
+    "static/js/3.4e05f236.chunk.js": "/ggtable/static/js/3.4e05f236.chunk.js",
+    "static/js/3.4e05f236.chunk.js.map": "/ggtable/static/js/3.4e05f236.chunk.js.map",
+    "index.html": "/ggtable/index.html",
+    "static/css/2.58fc907d.chunk.css.map": "/ggtable/static/css/2.58fc907d.chunk.css.map",
+    "static/css/main.703f03fb.chunk.css.map": "/ggtable/static/css/main.703f03fb.chunk.css.map",
+    "static/js/2.507c5de8.chunk.js.LICENSE.txt": "/ggtable/static/js/2.507c5de8.chunk.js.LICENSE.txt",
+    "static/media/drawing.b43fc638.svg": "/ggtable/static/media/drawing.b43fc638.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.5e4b9af0.js",
+    "static/css/2.58fc907d.chunk.css",
+    "static/js/2.507c5de8.chunk.js",
+    "static/css/main.703f03fb.chunk.css",
+    "static/js/main.fb79cbaa.chunk.js"
+  ]
+}
