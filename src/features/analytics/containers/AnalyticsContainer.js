@@ -77,15 +77,42 @@ export default function AnalyticsContainer() {
           })
         );
 
-        setDate([new Date(startDate), new Date(endDate)]);
+        if (
+          new Date(startDate) !== _querySeach?.start_date &&
+          new Date(endDate) !== _querySeach?.end_date
+        ) {
+          setDate([new Date(startDate), new Date(endDate)]);
+        }
+      }
+
+      if (_querySeach?.show_headers) {
+        let { show_headers } = _querySeach;
+        show_headers = show_headers.split(",");
+        let _tableHeader = TABLE_HEADERS.map((item) => {
+          return { ...item, show: show_headers.includes(item.key) };
+        });
+        setTableHeaders(_tableHeader);
+      } else {
+        let _tableHeader = TABLE_HEADERS.map((item) => item.key).join(",");
+        let _newSearch = queryFilter(searchQuery, {
+          show_headers: _tableHeader,
+        });
+        history.push({ search: _newSearch });
       }
     } else {
+      let startDate = format(startOfMonth(new Date()), "yyyy-MM-dd");
+      let endDate = format(endOfMonth(new Date()), "yyyy-MM-dd");
       dispatch(
         fetchAnalyticsData({
-          startDate: format(startOfMonth(new Date()), "yyyy-MM-dd"),
-          endDate: format(endOfMonth(new Date()), "yyyy-MM-dd"),
+          startDate,
+          endDate,
         })
       );
+      let _newSearch = queryFilter(searchQuery, {
+        start_date: startDate,
+        end_date: endDate,
+      });
+      history.push({ search: _newSearch });
     }
   }, [searchQuery]);
 
@@ -111,7 +138,17 @@ export default function AnalyticsContainer() {
   };
 
   const handleUpdateHeader = (arr) => {
-    setTableHeaders(arr);
+    let _queryArray = arr
+      .filter((item) => item.show)
+      .map((item) => item.key)
+      .join(",");
+    // setTableHeaders(arr);
+
+    let _newSearch = queryFilter(searchQuery, {
+      show_headers: _queryArray,
+    });
+
+    history.push({ search: _newSearch });
   };
 
   const aggreegatedAnalytics = useMemo(() => {
@@ -235,36 +272,38 @@ export default function AnalyticsContainer() {
         <div className={styles.analyticsTableWrapper}>
           <table>
             <thead>
-              {viewHeaders.map((item) => {
-                return (
-                  <th key={item.key}>
-                    <ul className="listUnstyled">
-                      <li>
-                        <FontAwesome
-                          name={"filter"}
-                          size="2x"
-                          style={{ color: "#707070" }}
-                        />
-                      </li>
-                      <li>
-                        <h5 className="heading5">{item.label}</h5>
-                      </li>
-                      <li>
-                        <h1 className="heading1">
-                          {aggreegatedAnalytics[item.key]}
-                        </h1>
-                      </li>
-                    </ul>
-                  </th>
-                );
-              })}
+              <tr>
+                {viewHeaders.map((item) => {
+                  return (
+                    <th key={item.key}>
+                      <ul className="listUnstyled">
+                        <li>
+                          <FontAwesome
+                            name={"filter"}
+                            size="2x"
+                            style={{ color: "#707070" }}
+                          />
+                        </li>
+                        <li>
+                          <h5 className="heading5">{item.label}</h5>
+                        </li>
+                        <li>
+                          <h1 className="heading1">
+                            {aggreegatedAnalytics[item.key]}
+                          </h1>
+                        </li>
+                      </ul>
+                    </th>
+                  );
+                })}
+              </tr>
             </thead>
             <tbody className="heading5Reg">
-              {analyticsTableView.map((item) => {
+              {analyticsTableView.map((item, index) => {
                 return (
-                  <tr key={item.id + item.app_id}>
-                    {viewHeaders.map((header) => {
-                      return <td>{item[header.key]}</td>;
+                  <tr key={item.id + item.app_id + index}>
+                    {viewHeaders.map((header, index) => {
+                      return <td key={index}>{item[header.key]}</td>;
                     })}
                   </tr>
                 );

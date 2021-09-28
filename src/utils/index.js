@@ -44,3 +44,79 @@ export const updateArrayOfObj = (arr, obj, field, compare_value) => {
     return [];
   }
 };
+
+const currentTime = () => {
+  return Date.now();
+};
+
+export const getCachedData = (url) => {
+  let time = 1000 * 60 * 60 * 24 * 20;
+  let dataCache = {
+    data: {},
+    nextCleanup: new Date().getTime() + time,
+  };
+
+  try {
+    const data = localStorage.getItem(url);
+
+    if (data) {
+      dataCache = JSON.parse(data);
+    }
+  } catch (e) {
+    console.error(e.message);
+  }
+
+  return dataCache;
+};
+
+const cleanUpStorage = (data, url, time) => {
+  let isDeleted;
+  let oldest;
+  let oldestKey;
+
+  for (const key in data) {
+    const expiry = data[key].expiry;
+    if (expiry && expiry <= currentTime()) {
+      delete data[key];
+      isDeleted = true;
+    }
+
+    if (!oldest || oldest > expiry) {
+      oldest = expiry;
+      oldestKey = key;
+    }
+  }
+
+  if (!isDeleted && oldestKey) {
+    delete data[oldestKey];
+  }
+
+  localStorage.setItem(
+    url,
+    JSON.stringify({
+      data: data,
+      nextCleanup: currentTime() + time,
+    })
+  );
+};
+
+export const setUrlToCache = (url, value, day) => {
+  let time = 1000 * 60 * 60 * 24 * day;
+  const dataCache = getCachedData(url, time);
+
+  const data = dataCache.data;
+
+  const item = {
+    id: url,
+    expiry: new Date().getTime() + time,
+    data: value,
+  };
+
+  data[url] = item;
+
+  try {
+    localStorage.setItem(url, JSON.stringify(dataCache));
+  } catch (e) {
+    cleanUpStorage(data, url, time);
+  }
+};

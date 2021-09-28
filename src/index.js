@@ -7,9 +7,9 @@ import configStore from "../src/globalStore/store/configStore";
 
 const store = configStore();
 
-store.subscribe(() => {
-  console.log(store.getState());
-});
+// store.subscribe(() => {
+//   console.log(store.getState());
+// });
 
 ReactDOM.render(
   <React.StrictMode>
