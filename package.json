@@ -2,7 +2,6 @@
   "name": "ggtable",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://gauthamjm007.github.io/ggtable",
   "dependencies": {
     "@wojtekmaj/react-daterange-picker": "^3.3.0",
     "axios": "^0.21.4",
